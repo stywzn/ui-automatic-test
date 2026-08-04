@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 虚拟环境（体积大、机器相关，绝不入库）
+.venv/
+venv/
+env/
+
+# pytest / Playwright 产物
+.pytest_cache/
+test-results/
+playwright-report/
+*.log
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

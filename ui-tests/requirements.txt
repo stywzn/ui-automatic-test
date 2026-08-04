@@ -1,0 +1,5 @@
+# 这些版本在 Python 3.14 上实测可直接装(有 cp314 预编译 wheel，无需源码编译)。
+# 注意：不要降到 playwright 1.49，它会锁死旧版 greenlet，在 3.14 上编译失败。
+playwright==1.61.0
+pytest==9.1.1
+pytest-playwright==0.8.0
