@@ -22,16 +22,16 @@
 
 ## B. 实时 / SSE 场景
 
-- [ ] **10. SSE 连接建立** — 进看板后 `sse-status` 变「实时已连接」
-- [ ] **11. 实时新增** — 后台 API 新建一项，**不刷新页面**，该项自动出现
-- [ ] **12. 多端同步** — 两个浏览器 context，A 端新建 → B 端自动收到
+- [x] **10. SSE 连接建立** — 进看板后 `sse-status` 变「实时已连接」　✅ 跑绿
+- [x] **11. 实时新增** — 后台 API 新建一项，**不刷新页面**，该项自动出现　✅ 跑绿
+- [x] **12. 多端同步** — 两个浏览器 context，A 端新建 → B 端自动收到　✅ 跑绿
 
 ## C. 专项测试（框架成型后扩展）
 
-- [ ] **13. 弱网测试** — Playwright 网络拦截/限速，模拟慢网/丢包，验证超时与提示
-- [ ] **14. 兼容性测试** — 同一套用例在 Chromium / Firefox / WebKit 各跑一遍
-- [ ] **15. 稳定性测试(SSE)** — 反复开关 SSE 连接，观察 `/api/health` 的 `sse_connections` 是否回落到 0
-- [ ] **16. 性能测试(体感)** — 测量看板首屏渲染、列表加载耗时
+- [x] **13. 弱网测试** — Playwright 网络拦截/限速，模拟慢网/丢包，验证超时与提示　✅ 跑绿
+- [x] **14. 兼容性测试** — 同一套用例在 Chrome + Edge 各跑一遍（channel，免下载）　✅ 跑绿
+- [x] **15. 稳定性测试(SSE)** — 反复开关 SSE 连接，观察 `/api/health` 的 `sse_connections` 是否回落到 0　✅ 跑绿
+- [x] **16. 性能测试(体感)** — 测量看板首屏渲染、列表加载耗时　✅ 跑绿
 
 ---
 
@@ -47,22 +47,25 @@
   - [ ] 登录态 fixture（`logged_in_page`，复用登录）
   - [ ] **[优化2] 评估 `by_testid` → 换 Playwright 内置 `get_by_test_id()`**（或保留当练习）
   - [ ] **[优化3] 给 `text_of` 等补返回类型标注 `-> str`**
-  - [ ] **[优化5🟡] git 化 + `.gitignore`**（忽略 .venv / __pycache__ / .pytest_cache；顺带解决跨电脑）
+  - [x] **[优化5🟡] git 化 + `.gitignore`**　✅ 已 init + 提交 + push 到私有仓库 github.com/stywzn/ui-automatic-test
   - [ ] 补面试笔记：fixture / 测试隔离 / 登录态 / 定位器策略
 
-- [ ] **M3 实时 / SSE 覆盖**
-  - [ ] 测试点 #10–#12（SSE 连接/实时新增/多端同步）
-  - [ ] 补面试笔记：SSE / 异步动态内容等待
+- [x] **M3 实时 / SSE 覆盖**　✅
+  - [x] 测试点 #10–#12（SSE 连接/实时新增/多端同步）
+  - [x] 补面试笔记：SSE / 异步动态内容等待（#13 #15）
 
-- [ ] **M4 专项亮点**（面试加分核心）
-  - [ ] 测试点 #13–#16，至少完成 **弱网 + 稳定性** 两个亮点
-  - [ ] **[优化4] SUT 自动起停 fixture**（可选，进阶）
-  - [ ] 补面试笔记：弱网 / 等待机制 / 失败排查(trace/video)
+- [x] **M4 专项亮点**（面试加分核心）　✅
+  - [x] 测试点 #13–#16 **全做**（弱网/稳定性/性能/兼容）
+  - [ ] **[优化4] SUT 自动起停 fixture**（可选，进阶，暂缓）
+  - [x] 补面试笔记：弱网/稳定性/参数化/flaky（#20–#25）
 
-- [ ] **M5 工程化**
-  - [ ] **[优化7] 测试报告**（HTML / Allure）
-  - [ ] 并行执行（pytest-xdist）
-  - [ ] **[优化6] CI**（GitHub Actions 自动跑）
-  - [ ] **[优化8] 总 README**：UI 根目录串起 SUT + 框架 + 各文档
+- [x] **M5 工程化**　✅（差 xdist 并行，可选）
+  - [x] **[优化7] 测试报告**（pytest-html，pytest.ini 已接，生成 reports/report.html）
+  - [ ] 并行执行（pytest-xdist，已装，加 `-n auto` 即可，可选）
+  - [x] **[优化6] CI**（GitHub Actions：.github/workflows/ui-tests.yml）
+  - [x] **[优化8] 总 README**：根目录 README.md（结构 + 覆盖度）
+
+- **拆分重构**：test_dashboard.py 按关注点拆成 dashboard/realtime/specialized/db 4 个文件　✅
+- **剩余可选小优化**：优化2（by_testid→get_by_test_id）、优化3（返回类型标注）、优化4（SUT 自动起停）
 
 - **已处理/无需动作**：优化9（面试笔记待补充→散在 M2–M4 陆续补）、优化10（有头 SxS 不可用，已存档）

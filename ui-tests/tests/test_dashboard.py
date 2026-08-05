@@ -1,7 +1,5 @@
-# tests/test_dashboard.py —— 看板相关用例
-
-from playwright.sync_api import Page, expect
-from pytest_playwright.pytest_playwright import page
+# tests/test_dashboard.py —— 看板功能测试（CRUD / 上传 / 登出）
+from playwright.sync_api import expect
 
 from config.settings import BASE_URL
 from pages.dashboard_page import DashboardPage
@@ -9,15 +7,12 @@ from pages.dashboard_page import DashboardPage
 
 def test_dashboard_loads(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
-
     expect(dashboard.items()).to_have_count(3)
 
 
 def test_add_item(logged_in_page):
     dashboard = DashboardPage(logged_in_page)
-
     dashboard.add_item("write automatic test-case")
-
     expect(dashboard.items()).to_have_count(4)
 
 

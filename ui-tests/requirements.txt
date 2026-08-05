@@ -3,3 +3,8 @@
 playwright==1.61.0
 pytest==9.1.1
 pytest-playwright==0.8.0
+
+# 工程化工具
+ruff==0.16.1            # linter：查未用/重复 import、风格问题
+pytest-html==4.2.0      # 生成 HTML 测试报告
+pytest-xdist==3.8.0     # 并行跑用例

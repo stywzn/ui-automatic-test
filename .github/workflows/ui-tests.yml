@@ -1,0 +1,44 @@
+name: UI Tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"   # CI 用稳定版，避开本地 3.14 的生态坑
+
+      - name: Install SUT deps
+        run: pip install -r teampilot-lite/requirements.txt
+
+      - name: Install test deps
+        run: pip install -r ui-tests/requirements.txt
+
+      - name: Install browser (Chrome + 系统依赖)
+        run: python -m playwright install --with-deps chrome
+
+      - name: Start SUT (background) & wait
+        run: |
+          cd teampilot-lite
+          python -m uvicorn app:app --port 8000 &
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:8000/api/health && break || sleep 1
+          done
+
+      - name: Run UI tests
+        run: cd ui-tests && pytest
+
+      - name: Upload HTML report
+        if: always()   # 失败也传，方便排查
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: ui-tests/reports/report.html

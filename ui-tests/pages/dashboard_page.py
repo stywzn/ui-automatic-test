@@ -44,3 +44,8 @@ class DashboardPage(BasePage):
 
     def logout(self):
         self.click(self.LOGOUT)
+
+    SSE_STATUS = "sse-status"
+
+    def sse_status(self):
+        return self.by_testid(self.SSE_STATUS)
