@@ -19,6 +19,8 @@ playwright-report/
 
 # 测试报告（生成物）
 reports/
+allure-results/
+allure-report/
 
 # 编辑器 / 系统
 .vscode/

@@ -36,9 +36,17 @@ jobs:
       - name: Run UI tests
         run: cd ui-tests && pytest
 
-      - name: Upload HTML report
-        if: always()   # 失败也传，方便排查
+      - name: Generate Allure report
+        if: always()   # 失败也生成——报告最有用的场景就是看失败
+        run: |
+          npm install -g allure-commandline
+          allure generate ui-tests/allure-results -o allure-report --clean --single-file
+
+      - name: Upload reports (HTML + Allure)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: html-report
-          path: ui-tests/reports/report.html
+          name: test-reports
+          path: |
+            ui-tests/reports/report.html
+            allure-report/

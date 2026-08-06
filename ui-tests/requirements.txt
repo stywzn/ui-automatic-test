@@ -6,5 +6,6 @@ pytest-playwright==0.8.0
 
 # 工程化工具
 ruff==0.16.1            # linter：查未用/重复 import、风格问题
-pytest-html==4.2.0      # 生成 HTML 测试报告
+pytest-html==4.2.0      # 生成 HTML 测试报告（自包含）
 pytest-xdist==3.8.0     # 并行跑用例
+allure-pytest==2.16.0   # 生成 Allure 原始结果（交互式报告，需配 allure CLI 出 HTML）
