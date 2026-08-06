@@ -1,0 +1,25 @@
+# GitLab CI/CD —— 和 GitHub Actions / Jenkins 等价（pipeline as code）
+# GitLab 会自动读仓库根目录这个文件。放到 GitLab 上 push 即自动触发。
+
+stages:
+  - test
+
+ui-tests:
+  stage: test
+  image: python:3.12 # 用 python 镜像当执行环境（CI 上没火绒，装 chrome channel）
+  before_script:
+    - pip install -r teampilot-lite/requirements.txt
+    - pip install -r ui-tests/requirements.txt
+    - python -m playwright install --with-deps chrome
+  script:
+    # 后台起被测系统 + 轮询 health 等就绪
+    - cd teampilot-lite && (python -m uvicorn app:app --port 8000 &) && cd ..
+    - for i in $(seq 1 20); do curl -sf http://localhost:8000/api/health && break || sleep 1; done
+    # 跑测试
+    - cd ui-tests && pytest
+  artifacts:
+    when: always # 失败也留报告
+    paths:
+      - ui-tests/reports/report.html
+      - ui-tests/allure-results/
+    expire_in: 1 week
