@@ -1,4 +1,4 @@
-from playwright.sync_api import Page, Locator
+from playwright.sync_api import Locator, Page
 
 from config.settings import BASE_URL
 

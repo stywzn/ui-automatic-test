@@ -9,3 +9,4 @@ ruff==0.16.1            # linter：查未用/重复 import、风格问题
 pytest-html==4.2.0      # 生成 HTML 测试报告（自包含）
 pytest-xdist==3.8.0     # 并行跑用例
 allure-pytest==2.16.0   # 生成 Allure 原始结果（交互式报告，需配 allure CLI 出 HTML）
+pyyaml==6.0.3           # 读数据驱动的 YAML 用例

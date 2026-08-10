@@ -1,0 +1,23 @@
+# 登录负向用例 —— 数据驱动。加一行 = 加一个用例，不动测试代码。
+# 这个 SUT 对任何非法登录都返回 401 + "用户名或密码错误"，所以断言统一。
+- name: empty_username          # 空用户名
+  username: ""
+  password: "admin123"
+- name: empty_password          # 空密码
+  username: "admin"
+  password: ""
+- name: both_empty              # 都空
+  username: ""
+  password: ""
+- name: wrong_password          # 密码错
+  username: "admin"
+  password: "wrong-password"
+- name: nonexistent_user        # 用户不存在
+  username: "ghost"
+  password: "admin123"
+- name: sql_injection_like      # 类 SQL 注入输入（应被当普通错误账号拒绝）
+  username: "admin' OR '1'='1"
+  password: "x"
+- name: overlong_username       # 超长用户名（边界）
+  username: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  password: "x"

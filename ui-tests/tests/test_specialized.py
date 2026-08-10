@@ -34,9 +34,7 @@ def test_sse_no_connection_leak(browser):
         lp.login(USERNAME, PASSWORD)
         ctxs.append(c)
 
-    assert wait_until(
-        lambda: sse_count() >= baseline + 3
-    ), f"连接没建满: {sse_count()}"
+    assert wait_until(lambda: sse_count() >= baseline + 3), f"连接没建满: {sse_count()}"
 
     for c in ctxs:
         c.close()

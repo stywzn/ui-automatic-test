@@ -11,8 +11,6 @@ def test_add_item_persisted(logged_in_page, db):
     expect(dashboard.items()).to_have_count(4)  # 先等 UI 更新，确保写入已提交
 
     # 直连数据库确认这条记录真的存在、字段正确
-    row = db.execute(
-        "SELECT * FROM items WHERE title=?", ("落库检查项目",)
-    ).fetchone()
+    row = db.execute("SELECT * FROM items WHERE title=?", ("落库检查项目",)).fetchone()
     assert row is not None
     assert row["status"] == "open"

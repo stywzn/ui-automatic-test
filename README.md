@@ -2,7 +2,7 @@
 
 基于 **Playwright + pytest + POM** 从 0 手搭的分层 **UI 自动化框架**。被测系统(SUT)是自建的团队协作看板 `teampilot-lite`（Go 风格的现代 Web 应用：FastAPI + SQLite，含登录鉴权 / 看板 CRUD / 文件上传 / **SSE 实时推送**）。
 
-覆盖四个层次:**功能 · 实时(SSE) · 数据库断言 · 四大专项(弱网 / 稳定性 / 性能 / 兼容性)**,共 **19 个用例**,接入 **三套 CI(GitHub Actions / GitLab CI / Jenkins)** + Allure 报告。
+覆盖四个层次:**功能 · 实时(SSE) · 数据库断言 · 四大专项(弱网 / 稳定性 / 性能 / 兼容性)**,共 **24 个用例(含 7 条数据驱动负向)**,接入 **三套 CI(GitHub Actions / GitLab CI / Jenkins)** + Allure 报告。
 
 > 重点不是"点点点",而是**框架设计 + 专项测试能力 + 工程化闭环**。
 
@@ -14,7 +14,8 @@
 - **实时测试(最见异步功底)**:用 `page.request` 从**浏览器之外**打接口造数据,验证页面**不刷新自动更新**(SSE 推送链路);多 context 验证多端同步。
 - **数据库断言**:`db` fixture 直连 SQLite,UI 操作后查库确认真落库、字段正确——**UI + 接口 + 数据库三层校验**,防"接口成功但数据没存/存错"。
 - **四大专项**:弱网(`page.route` 拦截加延迟)/ 稳定性(SSE 连接泄漏:开关连接看 `/api/health` 计数是否回落)/ 性能(首屏耗时,`time.monotonic`)/ 兼容性(`parametrize` 跑 Chrome + Edge)。
-- **抗 flaky**:操作走 Locator 自动等待、断言走 `expect` 自动重试,不写 `sleep`。
+- **数据驱动**:登录负向用例(空值 / 错密码 / 类注入 / 超长…)外置到 `data/login_cases.yaml`,**加一行 = 加一个用例,不动代码**。
+- **抗 flaky + 失败留证**:操作走 Locator 自动等待、断言走 `expect` 自动重试,不写 `sleep`;**失败时自动存 Playwright trace + 视频 + 截图**(`retain-on-failure`),排查像时光机回放。
 - **工程化闭环**:black + ruff 质量卡口 · Allure + HTML 报告 · **三套 CI** · 全 Docker 化(`docker compose up` 一条命令可复现)。
 
 ## 覆盖能力
@@ -103,7 +104,7 @@ UI/
 
 **UI 自动化测试框架(个人项目)** — Playwright / Python / pytest / POM / Docker / CI
 
-- 从 0 设计分层(POM)UI 自动化框架,自建 FastAPI+SQLite 被测系统,**19 个用例**覆盖功能/实时(SSE)/数据库断言/四大专项(弱网·稳定性·性能·兼容性)。
+- 从 0 设计分层(POM)UI 自动化框架,自建 FastAPI+SQLite 被测系统,**24 个用例(含数据驱动负向)**覆盖功能/实时(SSE)/数据库断言/四大专项(弱网·稳定性·性能·兼容性)。
 - fixture 做数据隔离 + 登录态复用;断言全走 `expect` 自动等待,基本消除 flaky;修过 fixture 竞态、浏览器被安全软件误杀等疑难。
 - 实时测试:从浏览器之外造数据验证 SSE 自动同步;稳定性测试:检测 SSE 长连接泄漏。
 - 工程化:black+ruff 质量卡口、Allure 报告、**三套 CI(Actions/GitLab/Jenkins)** + 全 Docker 化一键复现。
@@ -113,7 +114,7 @@ UI/
 - **S**:想做能体现测试工程能力的项目,不停在点点点。
 - **T**:从 0 搭一套可维护、抗 flaky、覆盖专项的 UI 自动化框架并接入 CI。
 - **A**:POM 分层隔离变化;fixture 做隔离+登录态;断言走自动等待;专项覆盖弱网/稳定性/性能/兼容;数据库三层校验;black+ruff+Allure+三套 CI+Docker 化。
-- **R**:19 用例本地+CI 双绿,flaky 基本消除,能讲透每个设计;踩过的坑(火绒误杀、竞态)都定位到根因。
+- **R**:24 用例本地+CI 双绿,flaky 基本消除,能讲透每个设计;踩过的坑(火绒误杀、竞态)都定位到根因。
 
 ## 面试可能追问（预演，详见面试问答.md）
 
