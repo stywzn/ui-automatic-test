@@ -1,0 +1,11 @@
+# 一条命令跑全套 UI 测试：docker compose up --build
+# SUT 和测试都在容器里跑，本机不用装任何东西。
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    # 把报告映射回本机（跑完在 ui-tests/reports、ui-tests/allure-results 里看）
+    volumes:
+      - ./ui-tests/reports:/app/ui-tests/reports
+      - ./ui-tests/allure-results:/app/ui-tests/allure-results

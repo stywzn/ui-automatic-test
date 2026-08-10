@@ -1,0 +1,12 @@
+# 构建镜像时不拷进去的东西（体积大/机器相关/生成物）
+**/.venv
+**/__pycache__
+**/.pytest_cache
+.git
+.github
+ui-tests/reports
+ui-tests/allure-results
+allure-report
+*.db
+node_modules
+.jenkins-local.txt

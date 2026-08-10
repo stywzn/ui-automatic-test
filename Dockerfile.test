@@ -1,0 +1,23 @@
+# 一站式测试镜像：基于官方 Playwright Python 镜像
+# —— 已内置 python + 浏览器 + 系统依赖，免下载（绕开本机网络下载失败的坑）
+FROM mcr.microsoft.com/playwright/python:v1.61.0-noble
+
+WORKDIR /app
+
+# curl 用于等 SUT 就绪（镜像一般自带，保险起见装一下）
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 先拷 requirements 再装依赖（利用 Docker 层缓存：requirements 不变就不重装）
+COPY teampilot-lite/requirements.txt /app/teampilot-lite/requirements.txt
+COPY ui-tests/requirements.txt /app/ui-tests/requirements.txt
+RUN pip install --no-cache-dir \
+    -r /app/teampilot-lite/requirements.txt \
+    -r /app/ui-tests/requirements.txt
+
+# 再拷全部代码
+COPY . /app
+
+# 起 SUT（后台）→ 等 health 就绪 → 跑测试
+# 用镜像自带的 chromium，覆盖掉 pytest.ini 里的 --browser-channel chrome；排除需要 Chrome/Edge 的兼容性用例
+CMD ["bash", "-lc", "cd /app/teampilot-lite && python -m uvicorn app:app --port 8000 & for i in $(seq 1 20); do curl -sf http://localhost:8000/api/health && break || sleep 1; done; cd /app/ui-tests && python -m pytest -o 'addopts=-v' -k 'not cross_browser'"]

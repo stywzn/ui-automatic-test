@@ -17,6 +17,9 @@ playwright-report/
 # SUT 运行时生成的数据库（数据文件不入库）
 *.db
 
+# 本地 Jenkins 凭据（本地学习用，绝不入库）
+.jenkins-local.txt
+
 # 测试报告（生成物）
 reports/
 allure-results/
