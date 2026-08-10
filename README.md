@@ -93,6 +93,10 @@ UI/
 |------|------|
 | [项目讲解.md](项目讲解.md) | 怎么从头讲这个项目(30 秒电梯版 + 详细 + 选型 + STAR + 局限) |
 | [面试问答.md](面试问答.md) | 33 个详细问答(项目/选型/POM/fixture/flaky/断言/SSE/专项/CI/职业) |
+| [OPTIMIZATION-QA.md](OPTIMIZATION-QA.md) | **"项目还能怎么优化"**:已做的 + 下一步(为什么/怎么/效果) |
+| [DB-ASSERTION-QA.md](DB-ASSERTION-QA.md) | 数据库断言:为什么/实现/坑/何时没有 |
+| [PERFORMANCE-QA.md](PERFORMANCE-QA.md) | 性能:UI 体感 vs 后端压测/完整体系/话术 |
+| [MOCK-INTERVIEW-PROMPT.md](MOCK-INTERVIEW-PROMPT.md) | 模拟面试 prompt(贴给 AI 或让我扮演) |
 | [简历项目介绍.md](简历项目介绍.md) | 简历 bullet + STAR 详细版 + 一句话版 |
 | [面试笔记.md](面试笔记.md) | 29 条技术点 + 调试经验 + 职业发展话术 |
 | [CICD.md](CICD.md) | CI/CD 详解:GitHub Actions + GitLab CI + Jenkins 三套 |
