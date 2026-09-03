@@ -10,8 +10,12 @@ ui-tests:
   before_script:
     - pip install -r teampilot-lite/requirements.txt
     - pip install -r ui-tests/requirements.txt
-    - python -m playwright install --with-deps chrome
   script:
+    # 质量卡口：lint 不过就直接失败。放在装浏览器之前，省掉 ~2GB 的无谓下载。
+    # 规则集锁在仓库根的 ruff.toml 里。
+    - python -m ruff check .
+    # lint 过了才值得装浏览器
+    - python -m playwright install --with-deps chrome
     # 后台起被测系统 + 轮询 health 等就绪
     - cd teampilot-lite && (python -m uvicorn app:app --port 8000 &) && cd ..
     - for i in $(seq 1 20); do curl -sf http://localhost:8000/api/health && break || sleep 1; done

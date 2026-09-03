@@ -1,6 +1,6 @@
 # UI 自动化测试框架（Playwright + Python）
 
-基于 **Playwright + pytest + POM** 从 0 手搭的分层 **UI 自动化框架**。被测系统(SUT)是自建的团队协作看板 `teampilot-lite`（Go 风格的现代 Web 应用：FastAPI + SQLite，含登录鉴权 / 看板 CRUD / 文件上传 / **SSE 实时推送**）。
+基于 **Playwright + pytest + POM** 从 0 手搭的分层 **UI 自动化框架**。被测系统(SUT)是配套的团队协作看板 `teampilot-lite`（FastAPI + SQLite，含登录鉴权 / 看板 CRUD / 文件上传 / **SSE 实时推送**）。SUT 的业务代码由 AI 生成——本项目的重点是测试框架，SUT 只是靶子；但**靶子上的可测试性接口是按测试需求设计的**：`/api/reset`（逐用例数据隔离）、`/api/health` 暴露 SSE 连接数（连接泄漏检测）。
 
 覆盖四个层次:**功能 · 实时(SSE) · 数据库断言 · 四大专项(弱网 / 稳定性 / 性能 / 兼容性)**,共 **24 个用例(含 7 条数据驱动负向)**,接入 **三套 CI(GitHub Actions / GitLab CI / Jenkins)** + Allure 报告。
 
@@ -16,7 +16,7 @@
 - **四大专项**:弱网(`page.route` 拦截加延迟)/ 稳定性(SSE 连接泄漏:开关连接看 `/api/health` 计数是否回落)/ 性能(首屏耗时,`time.monotonic`)/ 兼容性(`parametrize` 跑 Chrome + Edge)。
 - **数据驱动**:登录负向用例(空值 / 错密码 / 类注入 / 超长…)外置到 `data/login_cases.yaml`,**加一行 = 加一个用例,不动代码**。
 - **抗 flaky + 失败留证**:操作走 Locator 自动等待、断言走 `expect` 自动重试,不写 `sleep`;**失败时自动存 Playwright trace + 视频 + 截图**(`retain-on-failure`),排查像时光机回放。
-- **工程化闭环**:black + ruff 质量卡口 · Allure + HTML 报告 · **三套 CI** · 全 Docker 化(`docker compose up` 一条命令可复现)。
+- **工程化闭环**:ruff 静态检查卡口(三套 CI 均在装浏览器前拦一道) · Allure + HTML 报告 · **三套 CI** · 全 Docker 化(`docker compose up` 一条命令可复现)。
 
 ## 覆盖能力
 
@@ -84,8 +84,9 @@ UI/
 
 - **不是并行安全的**:所有用例共享一个 SUT + 一个库、全局 reset;要 `pytest -n auto` 需**按 worker 隔离被测环境**(独立端口 SUT + 独立库)。**并行的前提是隔离。**
 - **有头模式本机不可用**:完整 chrome.exe 在本机报 SxS 错误(14001);无头正常,用 trace/video 替代看画面。
-- **兼容性依赖 branded 浏览器**:Chrome/Edge channel 需系统装好;容器里只有 bundled chromium,故 CI/容器中排除该用例。
-- **未补**:失败时自动存 trace/video(性价比最高的下一步)、视觉回归、SUT 自动起停 fixture。
+- **兼容性依赖 branded 浏览器**:Chrome/Edge channel 需系统装好。**容器中排除**该用例(`Dockerfile.test` 里 `-k 'not cross_browser'`,镜像内只有 bundled chromium);**GitHub Actions 中并未排除**——ubuntu runner 预装了 Edge 所以能过,但这是依赖 runner 镜像的隐式前提,换 runner 可能挂。
+- **未补**:视觉回归、SUT 自动起停 fixture、`ruff format` 挂 CI(会连 md 里的代码块一起改,暂不挂)。
+  > 注:失败自动留 trace/video/截图**已经做了**——`pytest.ini` 里 `--tracing/--video/--screenshot retain-on-failure`。
 
 ## 面试准备文档（本目录）
 
@@ -98,7 +99,7 @@ UI/
 | [PERFORMANCE-QA.md](PERFORMANCE-QA.md) | 性能:UI 体感 vs 后端压测/完整体系/话术 |
 | [MOCK-INTERVIEW-PROMPT.md](MOCK-INTERVIEW-PROMPT.md) | 模拟面试 prompt(贴给 AI 或让我扮演) |
 | [简历项目介绍.md](简历项目介绍.md) | 简历 bullet + STAR 详细版 + 一句话版 |
-| [面试笔记.md](面试笔记.md) | 29 条技术点 + 调试经验 + 职业发展话术 |
+| [面试笔记.md](面试笔记.md) | 32 条技术点 + 调试经验 + 职业发展话术 |
 | [CICD.md](CICD.md) | CI/CD 详解:GitHub Actions + GitLab CI + Jenkins 三套 |
 | [Docker化指南.md](Docker化指南.md) | 全 Docker 化:一条命令跑测试 + Jenkins docker agent |
 | [ui-tests/prerequisites.md](ui-tests/prerequisites.md) | 前置知识:无头/有头 · SxS |
@@ -108,16 +109,16 @@ UI/
 
 **UI 自动化测试框架(个人项目)** — Playwright / Python / pytest / POM / Docker / CI
 
-- 从 0 设计分层(POM)UI 自动化框架,自建 FastAPI+SQLite 被测系统,**24 个用例(含数据驱动负向)**覆盖功能/实时(SSE)/数据库断言/四大专项(弱网·稳定性·性能·兼容性)。
+- 从 0 设计分层(POM)UI 自动化框架,配套 FastAPI+SQLite 被测系统并按测试需求设计其可测试性接口,**24 个用例(含数据驱动负向)**覆盖功能/实时(SSE)/数据库断言/四大专项(弱网·稳定性·性能·兼容性)。
 - fixture 做数据隔离 + 登录态复用;断言全走 `expect` 自动等待,基本消除 flaky;修过 fixture 竞态、浏览器被安全软件误杀等疑难。
 - 实时测试:从浏览器之外造数据验证 SSE 自动同步;稳定性测试:检测 SSE 长连接泄漏。
-- 工程化:black+ruff 质量卡口、Allure 报告、**三套 CI(Actions/GitLab/Jenkins)** + 全 Docker 化一键复现。
+- 工程化:ruff 质量卡口(规则集锁在 `ruff.toml`)、Allure 报告、**三套 CI(Actions/GitLab/Jenkins)** + 全 Docker 化一键复现。
 
 ## STAR 口述
 
 - **S**:想做能体现测试工程能力的项目,不停在点点点。
 - **T**:从 0 搭一套可维护、抗 flaky、覆盖专项的 UI 自动化框架并接入 CI。
-- **A**:POM 分层隔离变化;fixture 做隔离+登录态;断言走自动等待;专项覆盖弱网/稳定性/性能/兼容;数据库三层校验;black+ruff+Allure+三套 CI+Docker 化。
+- **A**:POM 分层隔离变化;fixture 做隔离+登录态;断言走自动等待;专项覆盖弱网/稳定性/性能/兼容;数据库三层校验;ruff 卡口+Allure+三套 CI+Docker 化。
 - **R**:24 用例本地+CI 双绿,flaky 基本消除,能讲透每个设计;踩过的坑(火绒误杀、竞态)都定位到根因。
 
 ## 面试可能追问（预演，详见面试问答.md）

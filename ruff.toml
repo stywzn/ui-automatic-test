@@ -1,0 +1,40 @@
+# ruff 配置 —— 显式锁定规则集。
+#
+# 为什么要有这个文件：不配置的话 ruff 用「当前版本的默认规则集」，而默认集会随
+# ruff 升级而变化。CI 里一旦装了新版 ruff，就可能凭空冒出一批新错误让流水线变红
+# （与被测网关项目里 golangci-lint `version: latest` 翻车是同一类问题）。
+# 显式 select 之后，规则只在这里改，升级 ruff 不会意外破坏 CI。
+
+line-length = 88
+target-version = "py312"        # 与 CI 的 Python 版本一致
+exclude = [".venv", "allure-report", "allure-results", "reports", "test-results"]
+
+[lint]
+# 只选当前代码已经满足（或修完即满足）的规则族，不引入新的一批报错：
+#   E4/E7/E9 + F  pycodestyle 错误 + pyflakes（未用导入、未定义名字等）
+#   I             import 排序（isort）
+#   B             flake8-bugbear（可疑写法、易错模式）
+#   PERF          perflint（性能反模式）
+select = ["E4", "E7", "E9", "F", "I", "B", "PERF"]
+
+[lint.isort]
+# 告诉 ruff 哪些是本项目模块。ui-tests/ 是 pytest 的 rootdir（见 pytest.ini 的
+# pythonpath），`config` 和 `pages` 都从那里导入，但 ruff 默认会把它们当第三方库，
+# 于是要求把它们和 playwright 混在同一个 import 块里 —— 那会破坏
+# 「标准库 / 第三方 / 本项目」的三段式分组。声明为 first-party 后分组才正确。
+known-first-party = ["config", "pages"]
+
+[lint.flake8-bugbear]
+# FastAPI 的依赖注入就是把 File()/Depends()/Query() 这类调用写在参数默认值里，
+# 这是框架的既定用法，不是 B008 想抓的「可变默认参数」缺陷。
+# 不加这段的话 teampilot-lite/app.py 的 upload 接口会被误报。
+extend-immutable-calls = [
+    "fastapi.Body",
+    "fastapi.Cookie",
+    "fastapi.Depends",
+    "fastapi.File",
+    "fastapi.Form",
+    "fastapi.Header",
+    "fastapi.Path",
+    "fastapi.Query",
+]

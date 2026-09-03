@@ -12,7 +12,7 @@
 | 测试按关注点拆分 | 一个 test_dashboard 塞了功能+实时+专项+DB,臃肿 | 拆成 login/dashboard/realtime/specialized/db | 职责清晰、好维护、好定位 |
 | `get_by_test_id` | 手拼 `[data-testid='x']` 选择器易错、语义弱 | 换 Playwright 内置定位器 | 语义清晰、少出错,改一处全框架受益 |
 | 数据驱动 | 负向登录用例复制粘贴一堆 | 用例外置 `login_cases.yaml` + 参数化 | 加一行=加一条,数据与逻辑分离 |
-| linter 卡口 | 手动漏 import、风格不一 | ruff + black,可挂 CI | 一键查修,风格统一 |
+| linter 卡口 | 手动漏 import、风格不一 | ruff(已挂三套 CI,规则集锁 `ruff.toml`) | 一键查修,风格统一,lint 不过不跑用例 |
 
 ## 二、下一步会做的优化(按优先级)
 

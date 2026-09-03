@@ -17,7 +17,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-from fastapi import FastAPI, File, Request, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import (
     HTMLResponse,
     JSONResponse,
@@ -84,7 +84,12 @@ _init_db()  # 服务启动即初始化数据库
 
 async def _broadcast(event: dict):
     data = json.dumps(event, ensure_ascii=False)
-    for q in list(subscribers):
+    # 这里的 list() 快照是必需的，不能按 ruff PERF101 的建议去掉：
+    # 循环体里有 await，事件循环可能在遍历途中切走；而客户端断开时
+    # /api/events 的 finally 会执行 subscribers.remove(q)（见下方 SSE 端点）。
+    # 直接遍历 subscribers 就可能在迭代中被修改 —— 漏发或抛
+    # "list changed size during iteration"。快照换来的是广播的确定性。
+    for q in list(subscribers):  # noqa: PERF101
         await q.put(data)
 
 
