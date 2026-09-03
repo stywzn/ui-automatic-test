@@ -22,6 +22,11 @@ jobs:
       - name: Install test deps
         run: pip install -r ui-tests/requirements.txt
 
+      # 质量卡口：lint 不过就直接失败，不浪费时间去装浏览器、起 SUT、跑用例。
+      # 规则集锁在仓库根的 ruff.toml 里，升级 ruff 不会凭空冒出新错误。
+      - name: Lint (ruff)
+        run: python -m ruff check .
+
       - name: Install browser (Chrome + 系统依赖)
         run: python -m playwright install --with-deps chrome
 

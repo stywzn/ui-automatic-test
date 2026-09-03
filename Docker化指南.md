@@ -19,7 +19,7 @@
 ```bash
 docker compose up --build
 ```
-它做的事：构建镜像（装依赖）→ 起容器 → 容器内**起 SUT + 跑 17 条测试** → 报告输出到本机 `ui-tests/reports`、`ui-tests/allure-results`。
+它做的事：构建镜像（装依赖）→ 起容器 → 容器内**起 SUT + 跑 24 条测试** → 报告输出到本机 `ui-tests/reports`、`ui-tests/allure-results`。
 > 第一次要拉 ~2GB 的 Playwright 镜像，慢；之后有缓存很快。改了代码重跑：`docker compose up --build`。
 
 跑完清理：`docker compose down`。

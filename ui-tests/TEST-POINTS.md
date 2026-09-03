@@ -59,9 +59,14 @@
   - [ ] **[优化4] SUT 自动起停 fixture**（可选，进阶，暂缓）
   - [x] 补面试笔记：弱网/稳定性/参数化/flaky（#20–#25）
 
-- [x] **M5 工程化**　✅（差 xdist 并行，可选）
+- [x] **M5 工程化**　✅（xdist 并行需先做环境隔离，见下）
   - [x] **[优化7] 测试报告**（pytest-html，pytest.ini 已接，生成 reports/report.html）
-  - [ ] 并行执行（pytest-xdist，已装，加 `-n auto` 即可，可选）
+  - [ ] 并行执行（pytest-xdist 已装，但**当前不可直接 `-n auto`**）
+        所有用例共享一个 SUT + 一个 SQLite 库 + autouse 的全局 `/api/reset`，
+        并行会互相踩。实测 `-n auto` 挂 4 条：`test_dashboard_loads`、
+        `test_delete_cancel`、`test_multi_client_sync`、`test_sse_no_connection_leak`。
+        要并行必须先按 worker 隔离被测环境——独立端口的 SUT + 独立库。
+        **并行的前提是隔离**（与根 README「不是并行安全的」一致）。
   - [x] **[优化6] CI**（GitHub Actions：.github/workflows/ui-tests.yml）
   - [x] **[优化8] 总 README**：根目录 README.md（结构 + 覆盖度）
 

@@ -14,6 +14,20 @@ pipeline {
             steps {
                 sh 'pip install -r teampilot-lite/requirements.txt'
                 sh 'pip install -r ui-tests/requirements.txt'
+            }
+        }
+
+        stage('Lint') {
+            // 质量卡口：lint 不过就直接失败，后面装浏览器/起 SUT 都不用跑了。
+            // 规则集锁在仓库根的 ruff.toml 里，升级 ruff 不会凭空冒出新错误。
+            steps {
+                sh 'python -m ruff check .'
+            }
+        }
+
+        stage('Install browser') {
+            // 单独一个 stage：浏览器内核 ~2GB，只有 lint 过了才值得装。
+            steps {
                 sh 'python -m playwright install --with-deps chrome'
             }
         }
