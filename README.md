@@ -99,7 +99,7 @@ UI/
 | [PERFORMANCE-QA.md](PERFORMANCE-QA.md) | 性能:UI 体感 vs 后端压测/完整体系/话术 |
 | [MOCK-INTERVIEW-PROMPT.md](MOCK-INTERVIEW-PROMPT.md) | 模拟面试 prompt(贴给 AI 或让我扮演) |
 | [简历项目介绍.md](简历项目介绍.md) | 简历 bullet + STAR 详细版 + 一句话版 |
-| [面试笔记.md](面试笔记.md) | 34 条技术点 + 调试经验 + 职业发展话术 |
+| [面试笔记.md](面试笔记.md) | 35 条技术点 + 调试经验 + 职业发展话术 |
 | [CICD.md](CICD.md) | CI/CD 详解:GitHub Actions + GitLab CI + Jenkins 三套 |
 | [Docker化指南.md](Docker化指南.md) | 全 Docker 化:一条命令跑测试 + Jenkins docker agent |
 | [ui-tests/prerequisites.md](ui-tests/prerequisites.md) | 前置知识:无头/有头 · SxS |
