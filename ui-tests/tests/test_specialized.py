@@ -11,8 +11,8 @@ from pages.login_page import LoginPage
 
 def test_sse_no_connection_leak(browser):
     """稳定性：反复开关 SSE 连接，服务端连接数应回落（不泄漏）。"""
-    with browser.new_context() as probe_ctc:
-        probe = probe_ctc.new_page()
+    with browser.new_context() as probe_ctx:
+        probe = probe_ctx.new_page()
 
         def sse_count():
             return probe.request.get(f"{BASE_URL}/api/health").json()["sse_connections"]

@@ -14,6 +14,7 @@ def api_request(playwright):
     yield ctx
     ctx.dispose()
 
+
 @pytest.fixture(autouse=True)
 def reset_data(api_request):
     """每个用例前重置 SUT 数据库到初始态 —— 测试隔离。"""

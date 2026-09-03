@@ -39,5 +39,3 @@ def test_multi_client_sync(browser):
         expect(dash_b.items()).to_have_count(3)
         dash_a.add_item("A端新建")
         expect(dash_b.items()).to_have_count(4)  # B 端不操作，SSE 自动收到
-
-

@@ -2,7 +2,6 @@ from pages.base_page import BasePage
 
 
 class LoginPage(BasePage):
-
     USERNAME = "login-username"
     PASSWORD = "login-password"
     SUBMIT = "login-submit"

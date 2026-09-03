@@ -10,6 +10,7 @@ teampilot-lite —— 团队看板被测系统(SUT)，用于 UI 自动化练习�
     pip install -r requirements.txt
     uvicorn app:app --reload --port 8000
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -219,7 +220,9 @@ async def upload(request: Request, file: UploadFile = File(...)):
     )
     conn.commit()
     conn.close()
-    return JSONResponse({"filename": file.filename, "size": len(content)}, status_code=201)
+    return JSONResponse(
+        {"filename": file.filename, "size": len(content)}, status_code=201
+    )
 
 
 @app.get("/api/uploads")
