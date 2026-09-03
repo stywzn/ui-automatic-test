@@ -42,10 +42,9 @@ def test_dashboard_requires_login(page: Page):
 
 @pytest.mark.parametrize("channel", ["chrome", "msedge"])
 def test_login_cross_browser(playwright, channel):
-    browser = playwright.chromium.launch(channel=channel)  # 分别启动 Chrome / Edge
-    page = browser.new_page()
-    lp = LoginPage(page)
-    lp.open()
-    lp.login(USERNAME, PASSWORD)
-    expect(page).to_have_url(f"{BASE_URL}/dashboard")
-    browser.close()
+    with playwright.chromium.launch(channel=channel) as browser:
+        page = browser.new_page()
+        lp = LoginPage(page)
+        lp.open()
+        lp.login(USERNAME, PASSWORD)
+        expect(page).to_have_url(f"{BASE_URL}/dashboard")

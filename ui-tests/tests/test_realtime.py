@@ -24,22 +24,20 @@ def test_realtime_add_via_sse(logged_in_page):
 
 def test_multi_client_sync(browser):
     # 两个独立上下文 = 两个“设备/用户”
-    ctx_a = browser.new_context()
-    ctx_b = browser.new_context()
-    page_a = ctx_a.new_page()
-    page_b = ctx_b.new_page()
+    with browser.new_context() as ctx_a, browser.new_context() as ctx_b:
+        page_a = ctx_a.new_page()
+        page_b = ctx_b.new_page()
 
-    for p in (page_a, page_b):
-        login = LoginPage(p)
-        login.open()
-        login.login(USERNAME, PASSWORD)
+        for p in (page_a, page_b):
+            login = LoginPage(p)
+            login.open()
+            login.login(USERNAME, PASSWORD)
 
-    dash_a = DashboardPage(page_a)
-    dash_b = DashboardPage(page_b)
+        dash_a = DashboardPage(page_a)
+        dash_b = DashboardPage(page_b)
 
-    expect(dash_b.items()).to_have_count(3)
-    dash_a.add_item("A端新建")
-    expect(dash_b.items()).to_have_count(4)  # B 端不操作，SSE 自动收到
+        expect(dash_b.items()).to_have_count(3)
+        dash_a.add_item("A端新建")
+        expect(dash_b.items()).to_have_count(4)  # B 端不操作，SSE 自动收到
 
-    ctx_a.close()
-    ctx_b.close()
+

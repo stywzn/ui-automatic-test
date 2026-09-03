@@ -99,7 +99,7 @@ UI/
 | [PERFORMANCE-QA.md](PERFORMANCE-QA.md) | 性能:UI 体感 vs 后端压测/完整体系/话术 |
 | [MOCK-INTERVIEW-PROMPT.md](MOCK-INTERVIEW-PROMPT.md) | 模拟面试 prompt(贴给 AI 或让我扮演) |
 | [简历项目介绍.md](简历项目介绍.md) | 简历 bullet + STAR 详细版 + 一句话版 |
-| [面试笔记.md](面试笔记.md) | 32 条技术点 + 调试经验 + 职业发展话术 |
+| [面试笔记.md](面试笔记.md) | 34 条技术点 + 调试经验 + 职业发展话术 |
 | [CICD.md](CICD.md) | CI/CD 详解:GitHub Actions + GitLab CI + Jenkins 三套 |
 | [Docker化指南.md](Docker化指南.md) | 全 Docker 化:一条命令跑测试 + Jenkins docker agent |
 | [ui-tests/prerequisites.md](ui-tests/prerequisites.md) | 前置知识:无头/有头 · SxS |
@@ -111,6 +111,8 @@ UI/
 
 - 从 0 设计分层(POM)UI 自动化框架,配套 FastAPI+SQLite 被测系统并按测试需求设计其可测试性接口,**24 个用例(含数据驱动负向)**覆盖功能/实时(SSE)/数据库断言/四大专项(弱网·稳定性·性能·兼容性)。
 - fixture 做数据隔离 + 登录态复用;断言全走 `expect` 自动等待,基本消除 flaky;修过 fixture 竞态、浏览器被安全软件误杀等疑难。
+- **测试资源生命周期治理**:手动管理 browser/context 的用例把 `close()` 写在断言之后,断言一失败清理即被跳过;改用 context manager 与 `contextlib.ExitStack` 接管,异常路径也保证释放。其中连接泄漏检测用例原本会**污染它自己要断言的指标**。
+- **修正错误的测量对象**:首屏性能断言原先量的是脚本挂钟时间(含框架轮询开销,受 runner 负载影响),改为读浏览器上报的导航性能指标后,阈值从 3000ms **收紧**到 500ms(实测真实耗时 9ms)。
 - 实时测试:从浏览器之外造数据验证 SSE 自动同步;稳定性测试:检测 SSE 长连接泄漏。
 - 工程化:ruff 质量卡口(规则集锁在 `ruff.toml`)、Allure 报告、**三套 CI(Actions/GitLab/Jenkins)** + 全 Docker 化一键复现。
 
