@@ -8,10 +8,16 @@ from config.settings import BASE_URL, DB_PATH, PASSWORD, USERNAME
 from pages.login_page import LoginPage
 
 
+@pytest.fixture(scope="session")
+def api_request(playwright):
+    ctx = playwright.request.new_context(base_url=BASE_URL)
+    yield ctx
+    ctx.dispose()
+
 @pytest.fixture(autouse=True)
-def reset_data(page):
+def reset_data(api_request):
     """每个用例前重置 SUT 数据库到初始态 —— 测试隔离。"""
-    page.request.post(f"{BASE_URL}/api/reset")
+    api_request.post("/api/reset")
     yield
 
 
