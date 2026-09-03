@@ -46,11 +46,17 @@ def test_sse_no_connection_leak(browser):
 
 
 def test_login_under_slow_network(page):
-    """弱网：用 CDP 给所有网络请求加 1s 延迟，验证仍能正常登录加载。
+    """弱网：用 CDP 给所有网络请求加 1s 延迟，验证 ①限速确实生效 ②弱网下仍能正常登录加载。
 
     为什么不用 page.route + time.sleep：sleep 阻塞的是 Playwright 同步 API 的
     调度器，那 1 秒里整个浏览器交互都停了，不只是被拦的那个请求。
     CDP 的 emulateNetworkConditions 是浏览器层面的真实限速，不阻塞调度器。
+
+    为什么要断言耗时：只断言"登录成功"的话，一旦 emulateNetworkConditions
+    静默失效（协议改名 / Chromium 行为变更 / 参数被忽略），这条用例会继续绿，
+    但它此刻测的是普通登录、不再是弱网 —— 覆盖悄悄消失且无人知晓。
+    实测不限速约 0.16s、限速 1000ms 约 4.15s（各 3 次，离散 0.02s），相差 26 倍，
+    所以卡在 2s 两侧余量都很足，不会引入 flaky。
 
     注意：CDP 是 Chromium 专有的。若将来把这条扩到 firefox/webkit，
     new_cdp_session() 会直接抛异常，需要换方案。
@@ -66,7 +72,7 @@ def test_login_under_slow_network(page):
             "uploadThroughput": -1,
         },
     )
-
+    start = time.monotonic()
     login = LoginPage(page)
     login.open()
     login.login(USERNAME, PASSWORD)
@@ -74,6 +80,11 @@ def test_login_under_slow_network(page):
     # 弱网下整个登录流程实测约 4.2s，而 expect 默认超时只有 5s —— 太贴边。
     # 显式放宽到 15s：弱网测试关心的是"最终能不能成功"，不是"多快"。
     expect(page.locator('[data-testid="item-list"]')).to_be_visible(timeout=15_000)
+    elapsed = time.monotonic() - start
+    assert elapsed > 2, (
+        f"限速似乎没生效：登录仅耗时 {elapsed:.2f}s。"
+        f"不限速约 0.16s、限速 1000ms 约 4.15s，此处应显著大于 2s。"
+    )
 
 
 def test_dashboard_load_performance(logged_in_page):
